@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   ApexAxisChartSeries,
@@ -20,6 +20,7 @@ import {
 } from 'ng-apexcharts';
 import { ComponentCardComponent } from '../../../shared/components/common/component-card/component-card.component';
 import { PageBreadcrumbComponent } from '../../../shared/components/common/page-breadcrumb/page-breadcrumb.component';
+import { ModalComponent } from '../../../shared/components/ui/modal/modal.component';
 
 type ContributionFrequency = 'monthly' | 'quarterly' | 'yearly';
 
@@ -64,6 +65,27 @@ type SimulationSummary = {
   bestYearInterest: number;
 };
 
+type CompoundInterestConfigData = {
+  initialCapital: number;
+  annualGrowthRate: number;
+  simulationYears: number;
+  dcaRanges: DcaRange[];
+  extraContributions: ExtraContribution[];
+};
+
+type StoredCompoundInterestConfig = {
+  id: number;
+  name: string;
+  savedAt: string;
+  data: CompoundInterestConfigData;
+};
+
+type CompoundInterestConfigExport = {
+  version: 1;
+  exportedAt: string;
+  configs: StoredCompoundInterestConfig[];
+};
+
 @Component({
   selector: 'app-compound-interest',
   imports: [
@@ -72,13 +94,24 @@ type SimulationSummary = {
     NgApexchartsModule,
     PageBreadcrumbComponent,
     ComponentCardComponent,
+    ModalComponent,
   ],
   templateUrl: './compound-interest.component.html',
 })
 export class CompoundInterestComponent {
+  @ViewChild('configFileInput') configFileInput?: ElementRef<HTMLInputElement>;
+
+  private readonly storageKey = 'compound-interest-configs';
+
   initialCapital = 20000;
   annualGrowthRate = 8;
   simulationYears = 25;
+  isConfigModalOpen = false;
+  configName = '';
+  configSearch = '';
+  configFeedback = '';
+  configFeedbackType: 'success' | 'error' | 'info' = 'info';
+  savedConfigs: StoredCompoundInterestConfig[] = [];
 
   readonly frequencyOptions: Array<{ value: ContributionFrequency; label: string }> = [
     { value: 'monthly', label: 'Mensual' },
@@ -278,6 +311,7 @@ export class CompoundInterestComponent {
   ];
 
   constructor() {
+    this.loadSavedConfigs();
     this.recalculate();
   }
 
@@ -397,6 +431,170 @@ export class CompoundInterestComponent {
   removeExtraContribution(id: number): void {
     this.extraContributions = this.extraContributions.filter((item) => item.id !== id);
     this.recalculate();
+  }
+
+  openConfigModal(): void {
+    this.loadSavedConfigs();
+    this.configName = '';
+    this.configSearch = '';
+    this.setConfigFeedback('Gestiona tus escenarios guardados o comparte la configuracion actual en JSON.', 'info');
+    this.isConfigModalOpen = true;
+  }
+
+  closeConfigModal(): void {
+    this.isConfigModalOpen = false;
+  }
+
+  saveCurrentConfiguration(): void {
+    const trimmedName = this.configName.trim();
+
+    if (!trimmedName) {
+      this.setConfigFeedback('Introduce un nombre para guardar la configuracion.', 'error');
+      return;
+    }
+
+    const configs = this.readStoredConfigs();
+    const nextId = this.getNextId(configs.map((item) => item.id));
+    const newConfig: StoredCompoundInterestConfig = {
+      id: nextId,
+      name: trimmedName,
+      savedAt: new Date().toISOString(),
+      data: this.getCurrentConfigData(),
+    };
+
+    configs.unshift(newConfig);
+    this.writeStoredConfigs(configs);
+    this.savedConfigs = configs;
+    this.configName = '';
+    this.setConfigFeedback(`Configuracion "${newConfig.name}" guardada en local.`, 'success');
+  }
+
+  loadConfiguration(config: StoredCompoundInterestConfig): void {
+    this.applyConfigData(config.data);
+    this.setConfigFeedback(`Configuracion "${config.name}" cargada correctamente.`, 'success');
+    this.closeConfigModal();
+  }
+
+  deleteConfiguration(id: number): void {
+    const config = this.savedConfigs.find((item) => item.id === id);
+    const updatedConfigs = this.readStoredConfigs().filter((item) => item.id !== id);
+    this.writeStoredConfigs(updatedConfigs);
+    this.savedConfigs = updatedConfigs;
+    this.setConfigFeedback(
+      config ? `Configuracion "${config.name}" eliminada.` : 'Configuracion eliminada.',
+      'success',
+    );
+  }
+
+  exportCurrentConfiguration(): void {
+    const payload: CompoundInterestConfigExport = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      configs: [
+        {
+          id: 1,
+          name: `Configuracion actual ${new Date().toLocaleDateString('es-ES')}`,
+          savedAt: new Date().toISOString(),
+          data: this.getCurrentConfigData(),
+        },
+      ],
+    };
+
+    this.downloadJson(payload, 'compound-interest-current.json');
+    this.setConfigFeedback('Configuracion actual exportada en JSON.', 'success');
+  }
+
+  exportSavedConfiguration(config: StoredCompoundInterestConfig): void {
+    const payload: CompoundInterestConfigExport = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      configs: [config],
+    };
+
+    this.downloadJson(payload, `${this.slugify(config.name)}.json`);
+    this.setConfigFeedback(`Configuracion "${config.name}" exportada en JSON.`, 'success');
+  }
+
+  exportAllSavedConfigurations(): void {
+    if (!this.savedConfigs.length) {
+      this.setConfigFeedback('No hay configuraciones guardadas para exportar.', 'error');
+      return;
+    }
+
+    const payload: CompoundInterestConfigExport = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      configs: this.savedConfigs,
+    };
+
+    this.downloadJson(payload, 'compound-interest-configs.json');
+    this.setConfigFeedback('Configuraciones guardadas exportadas en JSON.', 'success');
+  }
+
+  triggerImport(): void {
+    this.configFileInput?.nativeElement.click();
+  }
+
+  async handleImportFile(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      const rawText = await file.text();
+      const parsed = JSON.parse(rawText) as Partial<CompoundInterestConfigExport> | Partial<StoredCompoundInterestConfig>;
+      const importedConfigs = this.normalizeImportedConfigs(parsed);
+
+      if (!importedConfigs.length) {
+        this.setConfigFeedback('El archivo no contiene configuraciones validas.', 'error');
+        return;
+      }
+
+      const existingConfigs = this.readStoredConfigs();
+      let nextId = this.getNextId(existingConfigs.map((item) => item.id));
+      const usedNames = new Set(existingConfigs.map((item) => item.name.toLowerCase()));
+
+      const preparedImports = importedConfigs.map((config) => {
+        const uniqueName = this.makeImportedName(config.name, usedNames);
+        usedNames.add(uniqueName.toLowerCase());
+
+        return {
+          ...config,
+          id: nextId++,
+          name: uniqueName,
+        };
+      });
+
+      const mergedConfigs = [...preparedImports, ...existingConfigs];
+
+      this.writeStoredConfigs(mergedConfigs);
+      this.savedConfigs = mergedConfigs;
+      this.setConfigFeedback(`${importedConfigs.length} configuracion(es) importadas correctamente.`, 'success');
+    } catch {
+      this.setConfigFeedback('No se pudo importar el archivo JSON seleccionado.', 'error');
+    } finally {
+      input.value = '';
+    }
+  }
+
+  get filteredSavedConfigs(): StoredCompoundInterestConfig[] {
+    const term = this.configSearch.trim().toLowerCase();
+
+    if (!term) {
+      return this.savedConfigs;
+    }
+
+    return this.savedConfigs.filter((item) => item.name.toLowerCase().includes(term));
+  }
+
+  formatSavedDate(value: string): string {
+    return new Intl.DateTimeFormat('es-ES', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(new Date(value));
   }
 
   formatCurrency(value: number): string {
@@ -539,5 +737,118 @@ export class CompoundInterestComponent {
 
   private getNextId(ids: number[]): number {
     return ids.length ? Math.max(...ids) + 1 : 1;
+  }
+
+  private getCurrentConfigData(): CompoundInterestConfigData {
+    return {
+      initialCapital: this.initialCapital,
+      annualGrowthRate: this.annualGrowthRate,
+      simulationYears: this.simulationYears,
+      dcaRanges: this.dcaRanges.map((item) => ({ ...item })),
+      extraContributions: this.extraContributions.map((item) => ({ ...item })),
+    };
+  }
+
+  private applyConfigData(data: CompoundInterestConfigData): void {
+    this.initialCapital = this.normalizeNumber(data.initialCapital, 0);
+    this.annualGrowthRate = this.normalizeNumber(data.annualGrowthRate, 0);
+    this.simulationYears = this.normalizeInteger(data.simulationYears, 1, 50);
+    this.dcaRanges = (data.dcaRanges ?? []).map((item, index) => ({
+      id: index + 1,
+      label: item.label || `Tramo ${index + 1}`,
+      startYear: this.normalizeInteger(item.startYear, 1, this.simulationYears),
+      endYear: this.normalizeInteger(item.endYear, 1, this.simulationYears),
+      amount: this.normalizeNumber(item.amount, 0),
+      frequency: item.frequency,
+    }));
+    this.extraContributions = (data.extraContributions ?? []).map((item, index) => ({
+      id: index + 1,
+      label: item.label || `Extra ${index + 1}`,
+      year: this.normalizeInteger(item.year, 1, this.simulationYears),
+      month: this.normalizeInteger(item.month, 1, 12),
+      amount: this.normalizeNumber(item.amount, 0),
+    }));
+    this.recalculate();
+  }
+
+  private loadSavedConfigs(): void {
+    this.savedConfigs = this.readStoredConfigs();
+  }
+
+  private readStoredConfigs(): StoredCompoundInterestConfig[] {
+    try {
+      const rawValue = globalThis.localStorage?.getItem(this.storageKey);
+
+      if (!rawValue) {
+        return [];
+      }
+
+      const parsed = JSON.parse(rawValue) as StoredCompoundInterestConfig[];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private writeStoredConfigs(configs: StoredCompoundInterestConfig[]): void {
+    globalThis.localStorage?.setItem(this.storageKey, JSON.stringify(configs));
+  }
+
+  private normalizeImportedConfigs(
+    payload: Partial<CompoundInterestConfigExport> | Partial<StoredCompoundInterestConfig>,
+  ): StoredCompoundInterestConfig[] {
+    const configs = Array.isArray((payload as CompoundInterestConfigExport).configs)
+      ? (payload as CompoundInterestConfigExport).configs
+      : [payload as StoredCompoundInterestConfig];
+
+    return configs
+      .filter((item) => item && item.data)
+      .map((item, index) => ({
+        id: item.id ?? index + 1,
+        name: item.name?.trim() || `Configuracion importada ${index + 1}`,
+        savedAt: item.savedAt || new Date().toISOString(),
+        data: item.data as CompoundInterestConfigData,
+      }));
+  }
+
+  private makeImportedName(name: string, existingNames: Set<string>): string {
+    if (!existingNames.has(name.toLowerCase())) {
+      return name;
+    }
+
+    let index = 2;
+    let candidate = `${name} (${index})`;
+
+    while (existingNames.has(candidate.toLowerCase())) {
+      index += 1;
+      candidate = `${name} (${index})`;
+    }
+
+    return candidate;
+  }
+
+  private downloadJson(payload: CompoundInterestConfigExport, fileName: string): void {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private slugify(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[^\w\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  }
+
+  private setConfigFeedback(message: string, type: 'success' | 'error' | 'info'): void {
+    this.configFeedback = message;
+    this.configFeedbackType = type;
   }
 }
