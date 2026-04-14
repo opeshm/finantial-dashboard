@@ -1,0 +1,405 @@
+<div>
+  <app-page-breadcrumb pageTitle="Simulador de interes compuesto" />
+
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+    <div class="space-y-6 xl:col-span-4">
+      <app-component-card
+        title="Hipotesis base"
+        desc="Configura el capital inicial, la rentabilidad anual media y el horizonte temporal de la simulacion."
+      >
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Capital inicial</label>
+            <input
+              type="number"
+              min="0"
+              [(ngModel)]="initialCapital"
+              name="initialCapital"
+              (ngModelChange)="recalculate()"
+              class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            />
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Rentabilidad anual media</label>
+            <div class="relative">
+              <input
+                type="number"
+                min="0"
+                step="0.1"
+                [(ngModel)]="annualGrowthRate"
+                name="annualGrowthRate"
+                (ngModelChange)="recalculate()"
+                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-10 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+              />
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">%</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Anos a simular</label>
+            <input
+              type="number"
+              min="1"
+              max="50"
+              [(ngModel)]="simulationYears"
+              name="simulationYears"
+              (ngModelChange)="recalculate()"
+              class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            />
+          </div>
+        </div>
+      </app-component-card>
+
+      <app-component-card
+        title="DCA por tramos"
+        desc="Define aportaciones periodicas distintas para diferentes rangos de anos."
+      >
+        <div class="space-y-4">
+          @for (range of dcaRanges; track range.id) {
+            <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-white/[0.03]">
+              <div class="mb-4 flex items-start justify-between gap-3">
+                <div>
+                  <p class="text-sm font-semibold text-gray-800 dark:text-white/90">{{ range.label || ('Tramo ' + range.id) }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Aportacion periodica activa en un rango temporal concreto.</p>
+                </div>
+                <button
+                  type="button"
+                  (click)="removeDcaRange(range.id)"
+                  class="inline-flex items-center rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                >
+                  Eliminar
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                  <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Nombre del tramo</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="range.label"
+                    name="rangeLabel{{ range.id }}"
+                    (ngModelChange)="recalculate()"
+                    class="h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                  />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Desde ano</label>
+                  <input
+                    type="number"
+                    min="1"
+                    [(ngModel)]="range.startYear"
+                    name="rangeStart{{ range.id }}"
+                    (ngModelChange)="recalculate()"
+                    class="h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                  />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Hasta ano</label>
+                  <input
+                    type="number"
+                    min="1"
+                    [(ngModel)]="range.endYear"
+                    name="rangeEnd{{ range.id }}"
+                    (ngModelChange)="recalculate()"
+                    class="h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                  />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Aportacion</label>
+                  <input
+                    type="number"
+                    min="0"
+                    [(ngModel)]="range.amount"
+                    name="rangeAmount{{ range.id }}"
+                    (ngModelChange)="recalculate()"
+                    class="h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                  />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Frecuencia</label>
+                  <select
+                    [(ngModel)]="range.frequency"
+                    name="rangeFrequency{{ range.id }}"
+                    (ngModelChange)="recalculate()"
+                    class="h-10 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                  >
+                    @for (option of frequencyOptions; track option.value) {
+                      <option [value]="option.value">{{ option.label }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+            </div>
+          }
+
+          <button
+            type="button"
+            (click)="addDcaRange()"
+            class="inline-flex w-full items-center justify-center rounded-xl border border-dashed border-brand-300 bg-brand-50 px-4 py-3 text-sm font-medium text-brand-700 hover:bg-brand-100 dark:border-brand-800 dark:bg-brand-500/10 dark:text-brand-300"
+          >
+            Anadir tramo DCA
+          </button>
+        </div>
+      </app-component-card>
+
+      <app-component-card
+        title="Aportaciones extraordinarias"
+        desc="Registra inyecciones puntuales independientes del plan de DCA."
+      >
+        <div class="space-y-4">
+          @for (item of extraContributions; track item.id) {
+            <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-white/[0.03]">
+              <div class="mb-4 flex items-start justify-between gap-3">
+                <div>
+                  <p class="text-sm font-semibold text-gray-800 dark:text-white/90">{{ item.label || ('Extra ' + item.id) }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Aportacion puntual programada en una fecha concreta.</p>
+                </div>
+                <button
+                  type="button"
+                  (click)="removeExtraContribution(item.id)"
+                  class="inline-flex items-center rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                >
+                  Eliminar
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                  <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Descripcion</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="item.label"
+                    name="extraLabel{{ item.id }}"
+                    (ngModelChange)="recalculate()"
+                    class="h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                  />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Ano</label>
+                  <input
+                    type="number"
+                    min="1"
+                    [(ngModel)]="item.year"
+                    name="extraYear{{ item.id }}"
+                    (ngModelChange)="recalculate()"
+                    class="h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                  />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Mes</label>
+                  <select
+                    [(ngModel)]="item.month"
+                    name="extraMonth{{ item.id }}"
+                    (ngModelChange)="recalculate()"
+                    class="h-10 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                  >
+                    @for (month of monthOptions; track $index) {
+                      <option [ngValue]="$index + 1">{{ month }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="sm:col-span-2">
+                  <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Importe</label>
+                  <input
+                    type="number"
+                    min="0"
+                    [(ngModel)]="item.amount"
+                    name="extraAmount{{ item.id }}"
+                    (ngModelChange)="recalculate()"
+                    class="h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                  />
+                </div>
+              </div>
+            </div>
+          }
+
+          <button
+            type="button"
+            (click)="addExtraContribution()"
+            class="inline-flex w-full items-center justify-center rounded-xl border border-dashed border-teal-300 bg-teal-50 px-4 py-3 text-sm font-medium text-teal-700 hover:bg-teal-100 dark:border-teal-800 dark:bg-teal-500/10 dark:text-teal-300"
+          >
+            Anadir aportacion extraordinaria
+          </button>
+        </div>
+      </app-component-card>
+    </div>
+
+    <div class="space-y-6 xl:col-span-8">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Capital final</p>
+              <p class="mt-3 text-2xl font-semibold text-gray-900 dark:text-white">{{ formatCurrency(summary.finalBalance) }}</p>
+              <p class="mt-2 text-xs text-teal-600 dark:text-teal-400">Horizonte de {{ simulationYears }} anos</p>
+            </div>
+            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-300">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.33334 13.3333L7.08334 9.58333L9.58334 12.0833L16.6667 5" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12.5 5H16.6667V9.16667" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Capital invertido</p>
+              <p class="mt-3 text-2xl font-semibold text-gray-900 dark:text-white">{{ formatCurrency(summary.totalInvested) }}</p>
+              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Incluye inicial + DCA + extras</p>
+            </div>
+            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 3.33334V16.6667" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13.3333 6.66666H8.33333C7.55979 6.66666 6.81859 6.97399 6.27161 7.52094C5.72463 8.06791 5.41733 8.80908 5.41733 9.58266C5.41733 10.3562 5.72463 11.0974 6.27161 11.6444C6.81859 12.1913 7.55979 12.4987 8.33333 12.4987H11.6667C12.4402 12.4987 13.1814 12.806 13.7284 13.3529C14.2754 13.8999 14.5827 14.6411 14.5827 15.4147C14.5827 16.1882 14.2754 16.9294 13.7284 17.4764C13.1814 18.0233 12.4402 18.3307 11.6667 18.3307H5.41733" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Intereses generados</p>
+              <p class="mt-3 text-2xl font-semibold text-gray-900 dark:text-white">{{ formatCurrency(summary.totalInterest) }}</p>
+              <p class="mt-2 text-xs text-amber-600 dark:text-amber-400">{{ formatPercent(summary.interestWeight) }} del patrimonio final</p>
+            </div>
+            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 2.91666L12.5758 7.91666L18.3333 8.71666L14.1667 12.7083L15.1583 18.3333L10 15.7417L4.84167 18.3333L5.83333 12.7083L1.66667 8.71666L7.42417 7.91666L10 2.91666Z" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-sm text-gray-500 dark:text-gray-400">ROI sobre aportado</p>
+              <p class="mt-3 text-2xl font-semibold text-gray-900 dark:text-white">{{ formatPercent(summary.roi) }}</p>
+              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Mejor aceleracion: {{ summary.bestYearLabel }}</p>
+            </div>
+            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 16.6667V3.33334" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4.16667 9.16666L10 3.33333L15.8333 9.16666" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <app-component-card
+          title="Evolucion del patrimonio"
+          desc="Comparativa entre capital total, dinero aportado y beneficios acumulados."
+        >
+          <apx-chart
+            [series]="evolutionSeries"
+            [chart]="evolutionChart"
+            [colors]="evolutionColors"
+            [stroke]="evolutionStroke"
+            [fill]="evolutionFill"
+            [markers]="evolutionMarkers"
+            [grid]="evolutionGrid"
+            [dataLabels]="evolutionDataLabels"
+            [tooltip]="evolutionTooltip"
+            [xaxis]="evolutionXaxis"
+            [yaxis]="evolutionYaxis"
+            [legend]="evolutionLegend"
+          ></apx-chart>
+        </app-component-card>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <app-component-card
+          title="Composicion final"
+          desc="Peso relativo del capital inicial, las aportaciones y los intereses."
+        >
+          <apx-chart
+            [series]="compositionSeries"
+            [chart]="compositionChart"
+            [colors]="compositionColors"
+            [labels]="compositionLabels"
+            [legend]="compositionLegend"
+            [plotOptions]="compositionPlotOptions"
+            [dataLabels]="compositionDataLabels"
+            [stroke]="compositionStroke"
+            [tooltip]="compositionTooltip"
+            [responsive]="compositionResponsive"
+          ></apx-chart>
+        </app-component-card>
+
+        <app-component-card
+          title="Lectura rapida"
+          desc="Indicadores clave para entender la palanca del interes compuesto."
+        >
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+              <p class="text-xs uppercase tracking-wide text-gray-500">DCA total</p>
+              <p class="mt-2 text-lg font-semibold text-gray-900 dark:text-white">{{ formatCurrency(summary.totalDca) }}</p>
+            </div>
+
+            <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+              <p class="text-xs uppercase tracking-wide text-gray-500">Extraordinarias</p>
+              <p class="mt-2 text-lg font-semibold text-gray-900 dark:text-white">{{ formatCurrency(summary.totalExtra) }}</p>
+            </div>
+
+            <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+              <p class="text-xs uppercase tracking-wide text-gray-500">Mejor ano de interes</p>
+              <p class="mt-2 text-lg font-semibold text-gray-900 dark:text-white">{{ summary.bestYearLabel }}</p>
+              <p class="mt-1 text-sm text-amber-600 dark:text-amber-400">{{ formatCurrency(summary.bestYearInterest) }}</p>
+            </div>
+
+            <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+              <p class="text-xs uppercase tracking-wide text-gray-500">Rentabilidad usada</p>
+              <p class="mt-2 text-lg font-semibold text-gray-900 dark:text-white">{{ formatPercent(annualGrowthRate) }}</p>
+              <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Capitalizacion mensual</p>
+            </div>
+          </div>
+        </app-component-card>
+      </div>
+
+      <app-component-card
+        title="Proyeccion anual"
+        desc="Detalle anual de aportaciones, intereses y capital acumulado al cierre de cada ejercicio."
+      >
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+            <thead>
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Ano</th>
+                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">DCA</th>
+                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Extra</th>
+                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Interes del ano</th>
+                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Interes acumulado</th>
+                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Balance final</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+              @for (row of yearlyProjection; track row.year) {
+                <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02]">
+                  <td class="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">Ano {{ row.year }}</td>
+                  <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ formatCurrency(row.annualDca) }}</td>
+                  <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ formatCurrency(row.annualExtra) }}</td>
+                  <td class="whitespace-nowrap px-4 py-3 text-sm text-amber-600 dark:text-amber-400">{{ formatCurrency(row.annualInterest) }}</td>
+                  <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ formatCurrency(row.cumulativeInterest) }}</td>
+                  <td class="whitespace-nowrap px-4 py-3 text-sm font-semibold text-teal-700 dark:text-teal-400">{{ formatCurrency(row.endingBalance) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </app-component-card>
+    </div>
+  </div>
+</div>
