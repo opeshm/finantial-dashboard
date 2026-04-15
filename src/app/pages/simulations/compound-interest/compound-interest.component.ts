@@ -169,7 +169,7 @@ export class CompoundInterestComponent {
     totalInterest: 0,
     roi: 0,
     interestWeight: 0,
-    bestYearLabel: 'Ano 1',
+    bestYearLabel: 'Año 1',
     bestYearInterest: 0,
   };
 
@@ -641,7 +641,7 @@ export class CompoundInterestComponent {
       totalInterest: cumulativeInterest,
       roi: totalInvested > 0 ? (cumulativeInterest / totalInvested) * 100 : 0,
       interestWeight: finalBalance > 0 ? (cumulativeInterest / finalBalance) * 100 : 0,
-      bestYearLabel: bestYear ? `Ano ${bestYear.year}` : 'Ano 1',
+      bestYearLabel: bestYear ? `Año ${bestYear.year}` : 'Año 1',
       bestYearInterest: bestYear?.annualInterest ?? 0,
     };
   }
@@ -649,7 +649,7 @@ export class CompoundInterestComponent {
   private buildEvolutionChart(initialCapital: number): void {
     this.evolutionXaxis = {
       ...this.evolutionXaxis,
-      categories: ['Inicio', ...this.yearlyProjection.map((item) => `Ano ${item.year}`)],
+      categories: ['Inicio', ...this.yearlyProjection.map((item) => `Año ${item.year}`)],
     };
 
     this.evolutionSeries = [
@@ -676,7 +676,7 @@ export class CompoundInterestComponent {
   private buildAnnualChart(): void {
     this.annualXaxis = {
       ...this.annualXaxis,
-      categories: this.yearlyProjection.map((item) => `Ano ${item.year}`),
+      categories: this.yearlyProjection.map((item) => `Año ${item.year}`),
     };
 
     this.annualSeries = [
@@ -689,7 +689,7 @@ export class CompoundInterestComponent {
         data: this.yearlyProjection.map((item) => Number(item.annualExtra.toFixed(2))),
       },
       {
-        name: 'Intereses del ano',
+        name: 'Intereses del año',
         data: this.yearlyProjection.map((item) => Number(item.annualInterest.toFixed(2))),
       },
     ];
