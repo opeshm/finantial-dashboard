@@ -1,0 +1,83 @@
+<app-component-card
+  title="Aportaciones extraordinarias"
+  desc="Registra inyecciones puntuales independientes del plan de DCA."
+>
+  <div class="space-y-4">
+    @for (item of extraContributions; track item.id) {
+      <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="mb-4 flex items-start justify-between gap-3">
+          <div>
+            <p class="text-sm font-semibold text-gray-800 dark:text-white/90">{{ item.label || ('Extra ' + item.id) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Aportacion puntual programada en una fecha concreta.</p>
+          </div>
+          <button
+            type="button"
+            (click)="removeContribution.emit(item.id)"
+            class="inline-flex items-center rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+          >
+            Eliminar
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Descripcion</label>
+            <input
+              type="text"
+              [(ngModel)]="item.label"
+              name="extraLabel{{ item.id }}"
+              (ngModelChange)="changed.emit()"
+              class="h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            />
+          </div>
+
+          <div>
+            <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Año</label>
+            <input
+              type="number"
+              min="1"
+              [(ngModel)]="item.year"
+              name="extraYear{{ item.id }}"
+              (ngModelChange)="changed.emit()"
+              class="h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            />
+          </div>
+
+          <div>
+            <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Mes</label>
+            <select
+              [(ngModel)]="item.month"
+              name="extraMonth{{ item.id }}"
+              (ngModelChange)="changed.emit()"
+              class="h-10 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            >
+              @for (month of monthOptions; track $index) {
+                <option [ngValue]="$index + 1">{{ month }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">Importe</label>
+            <input
+              type="number"
+              min="0"
+              [(ngModel)]="item.amount"
+              name="extraAmount{{ item.id }}"
+              (ngModelChange)="changed.emit()"
+              class="h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            />
+          </div>
+        </div>
+      </div>
+    }
+
+    <button
+      type="button"
+      (click)="addContribution.emit()"
+      class="inline-flex w-full items-center justify-center rounded-xl border border-dashed border-teal-300 bg-teal-50 px-4 py-3 text-sm font-medium text-teal-700 hover:bg-teal-100 dark:border-teal-800 dark:bg-teal-500/10 dark:text-teal-300"
+    >
+      Añadir aportacion extraordinaria
+    </button>
+  </div>
+</app-component-card>

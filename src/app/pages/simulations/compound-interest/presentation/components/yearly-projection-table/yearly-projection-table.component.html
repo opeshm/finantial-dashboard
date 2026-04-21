@@ -1,0 +1,31 @@
+<app-component-card
+  title="Proyeccion anual"
+  desc="Detalle anual de aportaciones, intereses y capital acumulado al cierre de cada ejercicio."
+>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+      <thead>
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Año</th>
+          <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">DCA</th>
+          <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Extra</th>
+          <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Interes del año</th>
+          <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Interes acumulado</th>
+          <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Balance final</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+        @for (row of yearlyProjection; track row.year) {
+          <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02]">
+            <td class="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">Año {{ row.year }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ formatCurrency(row.annualDca) }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ formatCurrency(row.annualExtra) }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-sm text-amber-600 dark:text-amber-400">{{ formatCurrency(row.annualInterest) }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ formatCurrency(row.cumulativeInterest) }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-sm font-semibold text-teal-700 dark:text-teal-400">{{ formatCurrency(row.endingBalance) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</app-component-card>

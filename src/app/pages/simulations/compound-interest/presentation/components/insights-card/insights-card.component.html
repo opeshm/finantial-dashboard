@@ -1,0 +1,28 @@
+<app-component-card
+  title="Lectura rapida"
+  desc="Indicadores clave para entender la palanca del interes compuesto."
+>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+      <p class="text-xs uppercase tracking-wide text-gray-500">DCA total</p>
+      <p class="mt-2 text-lg font-semibold text-gray-900 dark:text-white">{{ formatCurrency(summary.totalDca) }}</p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+      <p class="text-xs uppercase tracking-wide text-gray-500">Extraordinarias</p>
+      <p class="mt-2 text-lg font-semibold text-gray-900 dark:text-white">{{ formatCurrency(summary.totalExtra) }}</p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+      <p class="text-xs uppercase tracking-wide text-gray-500">Mejor año de interes</p>
+      <p class="mt-2 text-lg font-semibold text-gray-900 dark:text-white">{{ summary.bestYearLabel }}</p>
+      <p class="mt-1 text-sm text-amber-600 dark:text-amber-400">{{ formatCurrency(summary.bestYearInterest) }}</p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+      <p class="text-xs uppercase tracking-wide text-gray-500">Rentabilidad usada</p>
+      <p class="mt-2 text-lg font-semibold text-gray-900 dark:text-white">{{ formatPercent(annualGrowthRate) }}</p>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Capitalizacion mensual</p>
+    </div>
+  </div>
+</app-component-card>

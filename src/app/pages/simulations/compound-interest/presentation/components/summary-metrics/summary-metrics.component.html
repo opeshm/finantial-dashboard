@@ -1,0 +1,64 @@
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+  <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Capital final</p>
+        <p class="mt-3 text-2xl font-semibold text-gray-900 dark:text-white">{{ formatCurrency(summary.finalBalance) }}</p>
+        <p class="mt-2 text-xs text-teal-600 dark:text-teal-400">Horizonte de {{ simulationYears }} años</p>
+      </div>
+      <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-300">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3.33334 13.3333L7.08334 9.58333L9.58334 12.0833L16.6667 5" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12.5 5H16.6667V9.16667" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Capital invertido</p>
+        <p class="mt-3 text-2xl font-semibold text-gray-900 dark:text-white">{{ formatCurrency(summary.totalInvested) }}</p>
+        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Incluye inicial + DCA + extras</p>
+      </div>
+      <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 3.33334V16.6667" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13.3333 6.66666H8.33333C7.55979 6.66666 6.81859 6.97399 6.27161 7.52094C5.72463 8.06791 5.41733 8.80908 5.41733 9.58266C5.41733 10.3562 5.72463 11.0974 6.27161 11.6444C6.81859 12.1913 7.55979 12.4987 8.33333 12.4987H11.6667C12.4402 12.4987 13.1814 12.806 13.7284 13.3529C14.2754 13.8999 14.5827 14.6411 14.5827 15.4147C14.5827 16.1882 14.2754 16.9294 13.7284 17.4764C13.1814 18.0233 12.4402 18.3307 11.6667 18.3307H5.41733" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Intereses generados</p>
+        <p class="mt-3 text-2xl font-semibold text-gray-900 dark:text-white">{{ formatCurrency(summary.totalInterest) }}</p>
+        <p class="mt-2 text-xs text-amber-600 dark:text-amber-400">{{ formatPercent(summary.interestWeight) }} del patrimonio final</p>
+      </div>
+      <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 2.91666L12.5758 7.91666L18.3333 8.71666L14.1667 12.7083L15.1583 18.3333L10 15.7417L4.84167 18.3333L5.83333 12.7083L1.66667 8.71666L7.42417 7.91666L10 2.91666Z" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">ROI sobre aportado</p>
+        <p class="mt-3 text-2xl font-semibold text-gray-900 dark:text-white">{{ formatPercent(summary.roi) }}</p>
+        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Mejor aceleracion: {{ summary.bestYearLabel }}</p>
+      </div>
+      <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 16.6667V3.33334" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4.16667 9.16666L10 3.33333L15.8333 9.16666" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<app-component-card
+  title="Hipotesis base"
+  desc="Configura el capital inicial, la rentabilidad anual media y el horizonte temporal de la simulacion."
+>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="sm:col-span-2">
+      <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Capital inicial</label>
+      <input
+        type="number"
+        min="0"
+        [ngModel]="initialCapital"
+        name="initialCapital"
+        (ngModelChange)="initialCapitalChange.emit($event)"
+        class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+      />
+    </div>
+
+    <div>
+      <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Rentabilidad anual media</label>
+      <div class="relative">
+        <input
+          type="number"
+          min="0"
+          step="0.1"
+          [ngModel]="annualGrowthRate"
+          name="annualGrowthRate"
+          (ngModelChange)="annualGrowthRateChange.emit($event)"
+          class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-10 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+        />
+        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">%</span>
+      </div>
+    </div>
+
+    <div>
+      <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Años a simular</label>
+      <input
+        type="number"
+        min="1"
+        max="50"
+        [ngModel]="simulationYears"
+        name="simulationYears"
+        (ngModelChange)="simulationYearsChange.emit($event)"
+        class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+      />
+    </div>
+  </div>
+</app-component-card>

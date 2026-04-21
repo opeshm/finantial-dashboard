@@ -1,0 +1,24 @@
+<app-component-card
+  title="Resumen de tramos"
+  desc="Gestiona todos los tramos DCA desde una modal dedicada sin ocupar espacio en el panel principal."
+>
+  <div class="space-y-4">
+    <div class="rounded-2xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+      <p class="text-xs uppercase tracking-wide text-gray-500">Tramos activos</p>
+      <p class="mt-3 text-3xl font-semibold text-gray-900 dark:text-white">{{ totalRanges }}</p>
+      <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Abre la configuración completa para editar, añadir o eliminar tramos.</p>
+    </div>
+
+    <button
+      type="button"
+      (click)="configure.emit()"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-500 px-4 py-3 text-sm font-medium text-white hover:bg-brand-600"
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 3.33334V12.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3.33334 8H12.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Configurar tramos
+    </button>
+  </div>
+</app-component-card>
