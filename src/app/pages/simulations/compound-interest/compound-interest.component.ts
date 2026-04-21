@@ -33,6 +33,8 @@ type DcaRange = {
   frequency: ContributionFrequency;
 };
 
+type DcaRangeDraft = Omit<DcaRange, 'id'>;
+
 type ExtraContribution = {
   id: number;
   label: string;
@@ -107,11 +109,13 @@ export class CompoundInterestComponent {
   annualGrowthRate = 8;
   simulationYears = 25;
   isConfigModalOpen = false;
+  isDcaModalOpen = false;
   configName = '';
   configSearch = '';
   configFeedback = '';
   configFeedbackType: 'success' | 'error' | 'info' = 'info';
   savedConfigs: StoredCompoundInterestConfig[] = [];
+  dcaDraft: DcaRangeDraft = this.createDefaultDcaDraft();
 
   readonly frequencyOptions: Array<{ value: ContributionFrequency; label: string }> = [
     { value: 'monthly', label: 'Mensual' },
@@ -392,20 +396,30 @@ export class CompoundInterestComponent {
     this.buildCompositionChart(initialCapital);
   }
 
-  addDcaRange(): void {
+  openDcaModal(): void {
+    this.dcaDraft = this.createDefaultDcaDraft();
+    this.isDcaModalOpen = true;
+  }
+
+  closeDcaModal(): void {
+    this.isDcaModalOpen = false;
+  }
+
+  saveDcaRange(): void {
     const nextId = this.getNextId(this.dcaRanges.map((item) => item.id));
     this.dcaRanges = [
       ...this.dcaRanges,
       {
         id: nextId,
-        label: `Tramo ${nextId}`,
-        startYear: 1,
-        endYear: Math.max(1, this.normalizeInteger(this.simulationYears, 1, 50)),
-        amount: 250,
-        frequency: 'monthly',
+        label: this.dcaDraft.label.trim() || `Tramo ${nextId}`,
+        startYear: this.normalizeInteger(this.dcaDraft.startYear, 1, this.simulationYears),
+        endYear: this.normalizeInteger(this.dcaDraft.endYear, 1, this.simulationYears),
+        amount: this.normalizeNumber(this.dcaDraft.amount, 0),
+        frequency: this.dcaDraft.frequency,
       },
     ];
     this.recalculate();
+    this.closeDcaModal();
   }
 
   removeDcaRange(id: number): void {
@@ -737,6 +751,16 @@ export class CompoundInterestComponent {
 
   private getNextId(ids: number[]): number {
     return ids.length ? Math.max(...ids) + 1 : 1;
+  }
+
+  private createDefaultDcaDraft(): DcaRangeDraft {
+    return {
+      label: '',
+      startYear: 1,
+      endYear: Math.max(1, this.normalizeInteger(this.simulationYears, 1, 50)),
+      amount: 250,
+      frequency: 'monthly',
+    };
   }
 
   private getCurrentConfigData(): CompoundInterestConfigData {
