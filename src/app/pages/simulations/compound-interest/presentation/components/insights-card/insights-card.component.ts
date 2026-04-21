@@ -5,6 +5,7 @@ import { formatCurrency, formatPercent } from '../../utils/compound-interest-for
 
 @Component({
   selector: 'app-insights-card',
+  host: { class: 'block' },
   imports: [ComponentCardComponent],
   templateUrl: './insights-card.component.html',
 })

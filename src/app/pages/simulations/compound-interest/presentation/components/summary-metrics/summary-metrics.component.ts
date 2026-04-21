@@ -4,6 +4,7 @@ import { formatCurrency, formatPercent } from '../../utils/compound-interest-for
 
 @Component({
   selector: 'app-summary-metrics',
+  host: { class: 'block' },
   imports: [],
   templateUrl: './summary-metrics.component.html',
 })

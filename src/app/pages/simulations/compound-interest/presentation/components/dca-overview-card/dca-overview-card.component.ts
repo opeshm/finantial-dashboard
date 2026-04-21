@@ -3,6 +3,7 @@ import { ComponentCardComponent } from '../../../../../../shared/components/comm
 
 @Component({
   selector: 'app-dca-overview-card',
+  host: { class: 'block' },
   imports: [ComponentCardComponent],
   templateUrl: './dca-overview-card.component.html',
 })

@@ -7,6 +7,7 @@ import { formatSavedDate } from '../../utils/compound-interest-formatters';
 
 @Component({
   selector: 'app-configurations-modal',
+  host: { class: 'block' },
   imports: [CommonModule, FormsModule, ModalComponent],
   templateUrl: './configurations-modal.component.html',
 })

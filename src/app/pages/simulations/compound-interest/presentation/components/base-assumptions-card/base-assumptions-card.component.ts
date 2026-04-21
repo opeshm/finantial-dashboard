@@ -4,6 +4,7 @@ import { ComponentCardComponent } from '../../../../../../shared/components/comm
 
 @Component({
   selector: 'app-base-assumptions-card',
+  host: { class: 'block' },
   imports: [FormsModule, ComponentCardComponent],
   templateUrl: './base-assumptions-card.component.html',
 })

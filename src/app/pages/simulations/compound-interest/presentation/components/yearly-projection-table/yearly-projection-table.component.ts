@@ -5,6 +5,7 @@ import { formatCurrency } from '../../utils/compound-interest-formatters';
 
 @Component({
   selector: 'app-yearly-projection-table',
+  host: { class: 'block' },
   imports: [ComponentCardComponent],
   templateUrl: './yearly-projection-table.component.html',
 })

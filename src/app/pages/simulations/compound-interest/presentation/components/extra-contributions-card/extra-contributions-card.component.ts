@@ -5,6 +5,7 @@ import { ExtraContribution } from '../../../domain/models/compound-interest.mode
 
 @Component({
   selector: 'app-extra-contributions-card',
+  host: { class: 'block' },
   imports: [FormsModule, ComponentCardComponent],
   templateUrl: './extra-contributions-card.component.html',
 })

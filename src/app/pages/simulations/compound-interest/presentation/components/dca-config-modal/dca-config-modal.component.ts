@@ -5,6 +5,7 @@ import { DcaRange, DcaRangeDraft, FrequencyOption } from '../../../domain/models
 
 @Component({
   selector: 'app-dca-config-modal',
+  host: { class: 'block' },
   imports: [FormsModule, ModalComponent],
   templateUrl: './dca-config-modal.component.html',
 })
