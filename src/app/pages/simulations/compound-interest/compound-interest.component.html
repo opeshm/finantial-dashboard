@@ -16,82 +16,80 @@
   </div>
 
   <div class="space-y-6">
-    <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
-      <div class="space-y-6 xl:col-span-4">
-        <app-base-assumptions-card
-          [initialCapital]="initialCapital"
-          [annualGrowthRate]="annualGrowthRate"
-          [simulationYears]="simulationYears"
-          (initialCapitalChange)="updateInitialCapital($event)"
-          (annualGrowthRateChange)="updateAnnualGrowthRate($event)"
-          (simulationYearsChange)="updateSimulationYears($event)"
-        />
-
-        <app-dca-overview-card
-          [totalRanges]="dcaRanges.length"
-          (configure)="openDcaModal()"
-        />
-      </div>
-
-      <div class="space-y-6 xl:col-span-8">
-        <app-summary-metrics
-          [summary]="summary"
-          [simulationYears]="simulationYears"
-        />
-
-        <div>
-          <app-component-card
-            title="Evolucion del patrimonio"
-            desc="Comparativa entre capital total, dinero aportado y beneficios acumulados."
-          >
-            <apx-chart
-              [series]="evolutionSeries"
-              [chart]="evolutionChart"
-              [colors]="evolutionColors"
-              [stroke]="evolutionStroke"
-              [fill]="evolutionFill"
-              [markers]="evolutionMarkers"
-              [grid]="evolutionGrid"
-              [dataLabels]="evolutionDataLabels"
-              [tooltip]="evolutionTooltip"
-              [xaxis]="evolutionXaxis"
-              [yaxis]="evolutionYaxis"
-              [legend]="evolutionLegend"
-            ></apx-chart>
-          </app-component-card>
-        </div>
-      </div>
-    </div>
-
-    <app-extra-contributions-card
-      [extraContributions]="extraContributions"
-      (configure)="openExtraContributionsModal()"
+    <app-summary-metrics
+      [summary]="summary"
+      [simulationYears]="simulationYears"
     />
 
-    <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
-      <app-component-card
-        title="Composicion final"
-        desc="Peso relativo del capital inicial, las aportaciones y los intereses."
-      >
-        <apx-chart
-          [series]="compositionSeries"
-          [chart]="compositionChart"
-          [colors]="compositionColors"
-          [labels]="compositionLabels"
-          [legend]="compositionLegend"
-          [plotOptions]="compositionPlotOptions"
-          [dataLabels]="compositionDataLabels"
-          [stroke]="compositionStroke"
-          [tooltip]="compositionTooltip"
-          [responsive]="compositionResponsive"
-        ></apx-chart>
-      </app-component-card>
+    <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+      <div class="xl:col-span-8">
+        <app-component-card
+          title="Evolucion del patrimonio"
+          desc="Comparativa entre capital total, dinero aportado y beneficios acumulados."
+        >
+          <apx-chart
+            [series]="evolutionSeries"
+            [chart]="evolutionChart"
+            [colors]="evolutionColors"
+            [stroke]="evolutionStroke"
+            [fill]="evolutionFill"
+            [markers]="evolutionMarkers"
+            [grid]="evolutionGrid"
+            [dataLabels]="evolutionDataLabels"
+            [tooltip]="evolutionTooltip"
+            [xaxis]="evolutionXaxis"
+            [yaxis]="evolutionYaxis"
+            [legend]="evolutionLegend"
+          ></apx-chart>
+        </app-component-card>
+      </div>
 
-      <app-insights-card
-        [summary]="summary"
+      <div class="xl:col-span-4">
+        <app-component-card
+          title="Composicion final"
+          desc="Peso relativo del capital inicial, las aportaciones y los intereses."
+        >
+          <apx-chart
+            [series]="compositionSeries"
+            [chart]="compositionChart"
+            [colors]="compositionColors"
+            [labels]="compositionLabels"
+            [legend]="compositionLegend"
+            [plotOptions]="compositionPlotOptions"
+            [dataLabels]="compositionDataLabels"
+            [stroke]="compositionStroke"
+            [tooltip]="compositionTooltip"
+            [responsive]="compositionResponsive"
+          ></apx-chart>
+        </app-component-card>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+      <app-base-assumptions-card
+        [initialCapital]="initialCapital"
         [annualGrowthRate]="annualGrowthRate"
+        [simulationYears]="simulationYears"
+        (initialCapitalChange)="updateInitialCapital($event)"
+        (annualGrowthRateChange)="updateAnnualGrowthRate($event)"
+        (simulationYearsChange)="updateSimulationYears($event)"
+      />
+
+      <app-dca-overview-card
+        [totalRanges]="dcaRanges.length"
+        (configure)="openDcaModal()"
+      />
+
+      <app-extra-contributions-card
+        [extraContributions]="extraContributions"
+        (configure)="openExtraContributionsModal()"
       />
     </div>
+
+    <app-insights-card
+      [summary]="summary"
+      [annualGrowthRate]="annualGrowthRate"
+    />
 
     <app-yearly-projection-table [yearlyProjection]="yearlyProjection" />
   </div>
