@@ -65,10 +65,7 @@
 
     <app-extra-contributions-card
       [extraContributions]="extraContributions"
-      [monthOptions]="monthOptions"
-      (changed)="recalculate()"
-      (addContribution)="addExtraContribution()"
-      (removeContribution)="removeExtraContribution($event)"
+      (configure)="openExtraContributionsModal()"
     />
 
     <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
@@ -127,5 +124,15 @@
     (loadConfiguration)="loadConfiguration($event)"
     (exportConfiguration)="exportSavedConfiguration($event)"
     (deleteConfiguration)="deleteConfiguration($event)"
+  />
+
+  <app-extra-contributions-modal
+    [isOpen]="isExtraContributionsModalOpen"
+    [extraContributions]="extraContributions"
+    [monthOptions]="monthOptions"
+    (close)="closeExtraContributionsModal()"
+    (changed)="recalculate()"
+    (addContribution)="addExtraContribution()"
+    (removeContribution)="removeExtraContribution($event)"
   />
 </div>

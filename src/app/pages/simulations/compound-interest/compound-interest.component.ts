@@ -40,6 +40,7 @@ import { ConfigurationsModalComponent } from './presentation/components/configur
 import { DcaConfigModalComponent } from './presentation/components/dca-config-modal/dca-config-modal.component';
 import { DcaOverviewCardComponent } from './presentation/components/dca-overview-card/dca-overview-card.component';
 import { ExtraContributionsCardComponent } from './presentation/components/extra-contributions-card/extra-contributions-card.component';
+import { ExtraContributionsModalComponent } from './presentation/components/extra-contributions-modal/extra-contributions-modal.component';
 import { InsightsCardComponent } from './presentation/components/insights-card/insights-card.component';
 import { SummaryMetricsComponent } from './presentation/components/summary-metrics/summary-metrics.component';
 import { YearlyProjectionTableComponent } from './presentation/components/yearly-projection-table/yearly-projection-table.component';
@@ -56,6 +57,7 @@ import { formatCompact, formatCurrency, formatPercent } from './presentation/uti
     DcaOverviewCardComponent,
     SummaryMetricsComponent,
     ExtraContributionsCardComponent,
+    ExtraContributionsModalComponent,
     InsightsCardComponent,
     YearlyProjectionTableComponent,
     DcaConfigModalComponent,
@@ -79,6 +81,7 @@ export class CompoundInterestComponent {
 
   isConfigModalOpen = false;
   isDcaModalOpen = false;
+  isExtraContributionsModalOpen = false;
   configName = '';
   configSearch = '';
   configFeedback = '';
@@ -322,6 +325,14 @@ export class CompoundInterestComponent {
   removeExtraContribution(id: number): void {
     this.extraContributions = this.extraContributions.filter((item) => item.id !== id);
     this.recalculate();
+  }
+
+  openExtraContributionsModal(): void {
+    this.isExtraContributionsModalOpen = true;
+  }
+
+  closeExtraContributionsModal(): void {
+    this.isExtraContributionsModalOpen = false;
   }
 
   openConfigModal(): void {
