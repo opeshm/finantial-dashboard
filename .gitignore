@@ -29,6 +29,7 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
+/.env.local
 /.angular/cache
 .sass-cache/
 /connect.lock
@@ -36,6 +37,7 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+.kanbanflow*
 
 # System files
 .DS_Store
