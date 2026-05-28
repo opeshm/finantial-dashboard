@@ -19,6 +19,7 @@ import { SignInComponent } from './pages/auth-pages/sign-in/sign-in.component';
 import { SignUpComponent } from './pages/auth-pages/sign-up/sign-up.component';
 import { CalenderComponent } from './pages/calender/calender.component';
 import { CompoundInterestComponent } from './pages/simulations/compound-interest/compound-interest.component';
+import { DcaHistoricalComponent } from './features/dca-historical/ui/dca-historical.component';
 
 export const routes: Routes = [
   {
@@ -107,6 +108,11 @@ export const routes: Routes = [
         path:'simulations/compound-interest',
         component:CompoundInterestComponent,
         title:'Simulador de interes compuesto | Dashboard'
+      },
+      {
+        path:'simulations/dca-historical',
+        component:DcaHistoricalComponent,
+        title:'Simulador DCA historico | Dashboard'
       },
     ]
   },
