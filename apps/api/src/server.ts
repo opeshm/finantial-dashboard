@@ -20,6 +20,7 @@ const port = Number(process.env.PORT ?? 4312);
 
 await app.register(cors, {
   origin: true,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
 });
 
 await app.register(fastifyMultipart, {
