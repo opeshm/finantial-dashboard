@@ -2,7 +2,7 @@
 
 ## Commands
 - Use `npm install`; `package-lock.json` is the only lockfile.
-- Dev server: `npm run dev` starts both apps: Angular dashboard on port 4310 and API on port 4312.
+- Dev server: `npm run dev` starts both apps: Angular dashboard on port 4310 and API on port 4312.\n- API dev server: `npm run api:dev` starts the API on port 4312.
 - Frontend-only dev server: `npm start` or `npm run web:dev` runs Angular on port 4310 with `apps/dashboard/proxy.conf.json`.
 - Production build/type/template check: `npm run build` builds Angular and type-checks the API.
 - API tests: `npm run api:test`.
@@ -23,7 +23,7 @@
 
 ## Feature Boundaries
 - The legacy compound-interest feature is under `apps/dashboard/src/app/pages/simulations/compound-interest/` and is organized as `domain/`, `application/`, `infrastructure/`, and `presentation/`.
-- New finance features should go under `apps/dashboard/src/app/features/`.
+- New finance features like `dca-historical` should go under `apps/dashboard/src/app/features/`.
 - The integrated backend API is under `apps/api/src/`.
 - `CompoundInterestComponent` provides `CompoundInterestSimulationService`, `CompoundInterestConfigService`, and maps `CompoundInterestConfigRepository` to `LocalStorageCompoundInterestConfigRepository` locally for the feature.
 - Saved compound-interest configurations use browser `localStorage` key `compound-interest-configs`; changing stored shapes may require migration or import/export handling.

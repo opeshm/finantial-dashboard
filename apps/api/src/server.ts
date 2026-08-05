@@ -1,6 +1,7 @@
 import cors from '@fastify/cors';
 import Fastify from 'fastify';
 import { registerDcaHistoricalRoutes } from './simulations/dca-historical/dca-historical.routes.js';
+import { registerAuthRoutes } from './auth/presentation/auth.routes.js';
 
 const app = Fastify({ logger: true });
 const port = Number(process.env.PORT ?? 4312);
@@ -11,6 +12,7 @@ await app.register(cors, {
 
 app.get('/health', async () => ({ ok: true }));
 await registerDcaHistoricalRoutes(app);
+await registerAuthRoutes(app);
 
 app.setErrorHandler((error, _request, reply) => {
   app.log.error(error);
