@@ -69,32 +69,9 @@
           Update your details to keep your profile up-to-date.
         </p>
       </div>
-      <form class="flex flex-col" (ngSubmit)="handleSave(fnInput.value, lnInput.value, fbInput.value, xInput.value, liInput.value, igInput.value)">
-        <div class="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
+      <form class="flex flex-col" (ngSubmit)="handleSave(fnInput.value, lnInput.value)">
+        <div class="custom-scrollbar h-[250px] overflow-y-auto px-2 pb-3">
           <div>
-            <h5 class="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-              Social Links
-            </h5>
-            <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-              <div>
-                <app-label>Facebook</app-label>
-                <app-input-field #fbInput type="text" [value]="user().social.facebook" />
-              </div>
-              <div>
-                <app-label>X.com</app-label>
-                <app-input-field #xInput type="text" [value]="user().social.x" />
-              </div>
-              <div>
-                <app-label>Linkedin</app-label>
-                <app-input-field #liInput type="text" [value]="user().social.linkedin" />
-              </div>
-              <div>
-                <app-label>Instagram</app-label>
-                <app-input-field #igInput type="text" [value]="user().social.instagram" />
-              </div>
-            </div>
-          </div>
-          <div class="mt-7">
             <h5 class="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
               Personal Information
             </h5>
@@ -118,7 +95,7 @@
           <app-button size="sm" variant="outline" (btnClick)="closeModal()">Close</app-button>
           <app-button
             size="sm"
-            (btnClick)="handleSave(fnInput.value, lnInput.value, fbInput.value, xInput.value, liInput.value, igInput.value)"
+            (btnClick)="handleSave(fnInput.value, lnInput.value)"
           >
             {{ isSaving ? 'Saving...' : 'Save Changes' }}
           </app-button>

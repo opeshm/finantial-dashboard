@@ -38,34 +38,18 @@ export class UserInfoCardComponent {
       firstName,
       lastName,
       email: currentUser?.email || 'user@example.com',
-      social: {
-        facebook: currentUser?.socialLinks?.facebook || 'https://www.facebook.com',
-        x: currentUser?.socialLinks?.x || 'https://x.com',
-        linkedin: currentUser?.socialLinks?.linkedin || 'https://www.linkedin.com',
-        instagram: currentUser?.socialLinks?.instagram || 'https://instagram.com',
-      },
     };
   });
 
   async handleSave(
     firstName: string | number,
     lastName: string | number,
-    facebook: string | number,
-    x: string | number,
-    linkedin: string | number,
-    instagram: string | number,
   ): Promise<void> {
     this.isSaving = true;
     try {
       await this.authService.updateProfile({
         firstName: String(firstName ?? ''),
         lastName: String(lastName ?? ''),
-        socialLinks: {
-          facebook: String(facebook ?? ''),
-          x: String(x ?? ''),
-          linkedin: String(linkedin ?? ''),
-          instagram: String(instagram ?? ''),
-        },
       });
       this.closeModal();
     } catch (err) {
