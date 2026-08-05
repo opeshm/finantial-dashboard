@@ -22,8 +22,19 @@ export class UserMetaCardComponent {
   isOpen = false;
   isSaving = false;
 
-  openModal() { this.isOpen = true; }
-  closeModal() { this.isOpen = false; }
+  firstName = '';
+  lastName = '';
+
+  openModal() {
+    const current = this.user();
+    this.firstName = current.firstName;
+    this.lastName = current.lastName;
+    this.isOpen = true;
+  }
+
+  closeModal() {
+    this.isOpen = false;
+  }
 
   readonly user = computed(() => {
     const currentUser = this.authService.currentUser();
@@ -41,15 +52,12 @@ export class UserMetaCardComponent {
     };
   });
 
-  async handleSave(
-    firstName: string | number,
-    lastName: string | number,
-  ): Promise<void> {
+  async handleSave(): Promise<void> {
     this.isSaving = true;
     try {
       await this.authService.updateProfile({
-        firstName: String(firstName ?? ''),
-        lastName: String(lastName ?? ''),
+        firstName: this.firstName.trim(),
+        lastName: this.lastName.trim(),
       });
       this.closeModal();
     } catch (err) {

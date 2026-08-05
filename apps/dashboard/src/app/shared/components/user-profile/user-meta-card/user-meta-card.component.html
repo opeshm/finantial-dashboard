@@ -63,7 +63,7 @@
         Update your details to keep your profile up-to-date.
       </p>
     </div>
-    <form class="flex flex-col" (ngSubmit)="handleSave(fnInput.value, lnInput.value)">
+    <form class="flex flex-col" (ngSubmit)="handleSave()">
       <div class="custom-scrollbar h-[250px] overflow-y-auto px-2 pb-3">
         <div>
           <h5 class="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
@@ -72,15 +72,15 @@
           <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div class="col-span-2 lg:col-span-1">
               <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">First Name</label>
-              <app-input-field #fnInput type="text" [value]="user().firstName" />
+              <app-input-field type="text" [(value)]="firstName" />
             </div>
             <div class="col-span-2 lg:col-span-1">
               <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Last Name</label>
-              <app-input-field #lnInput type="text" [value]="user().lastName" />
+              <app-input-field type="text" [(value)]="lastName" />
             </div>
             <div class="col-span-2 lg:col-span-1">
               <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Email Address</label>
-              <app-input-field type="text" [value]="user().email" />
+              <app-input-field type="text" [value]="user().email" [disabled]="true" />
             </div>
           </div>
         </div>
@@ -95,7 +95,7 @@
         </app-button>
         <app-button
           size="sm"
-          (btnClick)="handleSave(fnInput.value, lnInput.value)"
+          (btnClick)="handleSave()"
         >
           {{ isSaving ? 'Saving...' : 'Save Changes' }}
         </app-button>
