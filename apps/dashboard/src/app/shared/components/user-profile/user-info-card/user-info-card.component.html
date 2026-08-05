@@ -29,22 +29,6 @@
             {{ user().email }}
           </p>
         </div>
-        <div>
-          <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-            Phone
-          </p>
-          <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-            {{ user().phone }}
-          </p>
-        </div>
-        <div>
-          <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-            Bio
-          </p>
-          <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-            {{ user().bio }}
-          </p>
-        </div>
       </div>
     </div>
     <button
@@ -126,14 +110,6 @@
               <div class="col-span-2 lg:col-span-1">
                 <app-label>Email Address</app-label>
                 <app-input-field type="text" [value]="user().email" />
-              </div>
-              <div class="col-span-2 lg:col-span-1">
-                <app-label>Phone</app-label>
-                <app-input-field type="text" [value]="user().phone" />
-              </div>
-              <div class="col-span-2">
-                <app-label>Bio</app-label>
-                <app-input-field type="text" [value]="user().bio" />
               </div>
             </div>
           </div>
