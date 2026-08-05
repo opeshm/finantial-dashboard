@@ -55,3 +55,6 @@ Thumbs.db
 
 # Others
 doc/
+apps/api/data/
+apps/api/public/avatars/
+

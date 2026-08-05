@@ -1,13 +1,29 @@
 import cors from '@fastify/cors';
+import fastifyStatic from '@fastify/static';
 import Fastify from 'fastify';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { registerDcaHistoricalRoutes } from './simulations/dca-historical/dca-historical.routes.js';
 import { registerAuthRoutes } from './auth/presentation/auth.routes.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const publicAvatarsDir = path.resolve(__dirname, '../public/avatars');
+
+// Ensure local static avatars directory exists
+await fs.mkdir(publicAvatarsDir, { recursive: true });
 
 const app = Fastify({ logger: true });
 const port = Number(process.env.PORT ?? 4312);
 
 await app.register(cors, {
   origin: true,
+});
+
+await app.register(fastifyStatic, {
+  root: publicAvatarsDir,
+  prefix: '/avatars/',
 });
 
 app.get('/health', async () => ({ ok: true }));

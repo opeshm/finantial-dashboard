@@ -13,4 +13,8 @@ export class GoogleAuthRepository implements UserRepository {
     const user = Array.from(this.users.values()).find(u => u.email === email);
     return user || null;
   }
+
+  async findById(id: string): Promise<User | null> {
+    return this.users.get(id) || null;
+  }
 }

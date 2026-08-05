@@ -3,7 +3,7 @@ import { UserRepository } from '../domain/user.repository.js';
 
 /**
  * In-memory implementation of UserRepository.
- * Suitable for development. Replace with a persistent adapter (DB) when needed.
+ * Suitable for development/tests.
  * Users are stored by their Google sub (id) as the primary key.
  */
 export class InMemoryUserRepository implements UserRepository {
@@ -17,5 +17,9 @@ export class InMemoryUserRepository implements UserRepository {
   async findByEmail(email: string): Promise<User | null> {
     const user = Array.from(this.users.values()).find(u => u.email === email);
     return user ?? null;
+  }
+
+  async findById(id: string): Promise<User | null> {
+    return this.users.get(id) ?? null;
   }
 }

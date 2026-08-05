@@ -4,25 +4,25 @@
   <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
     <div class="flex flex-col items-center w-full gap-6 xl:flex-row">
       <div class="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
-        <img [src]="user.avatar" alt="user" />
+        <img [src]="user().avatar" [alt]="user().name" class="w-full h-full object-cover" />
       </div>
       <div class="order-3 xl:order-2">
         <h4 class="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
-          {{ user.firstName }} {{ user.lastName }}
+          {{ user().firstName }} {{ user().lastName }}
         </h4>
         <div class="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
           <p class="text-sm text-gray-500 dark:text-gray-400">
-            {{ user.role }}
+            {{ user().role }}
           </p>
           <div class="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
           <p class="text-sm text-gray-500 dark:text-gray-400">
-            {{ user.location }}
+            {{ user().location }}
           </p>
         </div>
       </div>
       <div class="flex items-center order-2 gap-2 grow xl:order-3 xl:justify-end">
         <a
-          [href]="user.social.facebook"
+          [href]="user().social.facebook"
           target="_blank"
           rel="noopener"
           class="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
@@ -43,7 +43,7 @@
         </a>
 
         <a
-          [href]="user.social.x"
+          [href]="user().social.x"
           target="_blank"
           rel="noopener"
           class="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
@@ -64,7 +64,7 @@
         </a>
 
         <a
-          [href]="user.social.linkedin"
+          [href]="user().social.linkedin"
           target="_blank"
           rel="noopener"
           class="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
@@ -85,7 +85,7 @@
         </a>
 
         <a
-          [href]="user.social.instagram"
+          [href]="user().social.instagram"
           target="_blank"
           rel="noopener"
           class="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
@@ -155,19 +155,19 @@
           <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div>
               <label>Facebook</label>
-              <app-input-field type="text" [value]="user.social.facebook" />
+              <app-input-field type="text" [value]="user().social.facebook" />
             </div>
             <div>
               <label>X.com</label>
-              <app-input-field type="text" [value]="user.social.x" />
+              <app-input-field type="text" [value]="user().social.x" />
             </div>
             <div>
               <label>Linkedin</label>
-              <app-input-field type="text" [value]="user.social.linkedin" />
+              <app-input-field type="text" [value]="user().social.linkedin" />
             </div>
             <div>
               <label>Instagram</label>
-              <app-input-field type="text" [value]="user.social.instagram" />
+              <app-input-field type="text" [value]="user().social.instagram" />
             </div>
           </div>
         </div>
@@ -178,23 +178,23 @@
           <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div class="col-span-2 lg:col-span-1">
               <label>First Name</label>
-              <app-input-field type="text" [value]="user.firstName" />
+              <app-input-field type="text" [value]="user().firstName" />
             </div>
             <div class="col-span-2 lg:col-span-1">
               <label>Last Name</label>
-              <app-input-field type="text" [value]="user.lastName" />
+              <app-input-field type="text" [value]="user().lastName" />
             </div>
             <div class="col-span-2 lg:col-span-1">
               <label>Email Address</label>
-              <app-input-field type="text" [value]="user.email" />
+              <app-input-field type="text" [value]="user().email" />
             </div>
             <div class="col-span-2 lg:col-span-1">
               <label>Phone</label>
-              <app-input-field type="text" [value]="user.phone" />
+              <app-input-field type="text" [value]="user().phone" />
             </div>
             <div class="col-span-2">
               <label>Bio</label>
-              <app-input-field type="text" [value]="user.bio" />
+              <app-input-field type="text" [value]="user().bio" />
             </div>
           </div>
         </div>
