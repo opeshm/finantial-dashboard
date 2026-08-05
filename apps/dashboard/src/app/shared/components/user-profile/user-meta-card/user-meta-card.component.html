@@ -1,10 +1,20 @@
-
-
 <div class="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
   <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
     <div class="flex flex-col items-center w-full gap-6 xl:flex-row">
-      <div class="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
+      <div
+        class="relative group w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
+        (click)="fileInput.click()"
+        title="Haz clic para subir un nuevo avatar"
+      >
         <img [src]="user().avatar" [alt]="user().name" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-white">
+            <path d="M12 15V9M12 9L9 12M12 9L15 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 16.7428C21.2215 15.734 22 14.2079 22 12.5C22 9.46243 19.5376 7 16.5 7C16.2815 7 16.0771 7.01259 15.8773 7.03715C15.0234 4.09062 12.2612 2 9 2C5.13401 2 2 5.13401 2 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="text-[10px] text-white font-medium mt-0.5">Cambiar</span>
+        </div>
+        <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" />
       </div>
       <div class="order-3 xl:order-2">
         <h4 class="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
@@ -137,7 +147,7 @@
         Update your details to keep your profile up-to-date.
       </p>
     </div>
-    <form class="flex flex-col" (ngSubmit)="handleSave()">
+    <form class="flex flex-col" (ngSubmit)="handleSave(fnInput.value, lnInput.value, fbInput.value, xInput.value, liInput.value, igInput.value)">
       <div class="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
         <div>
           <h5 class="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
@@ -145,20 +155,20 @@
           </h5>
           <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div>
-              <label>Facebook</label>
-              <app-input-field type="text" [value]="user().social.facebook" />
+              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Facebook</label>
+              <app-input-field #fbInput type="text" [value]="user().social.facebook" />
             </div>
             <div>
-              <label>X.com</label>
-              <app-input-field type="text" [value]="user().social.x" />
+              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">X.com</label>
+              <app-input-field #xInput type="text" [value]="user().social.x" />
             </div>
             <div>
-              <label>Linkedin</label>
-              <app-input-field type="text" [value]="user().social.linkedin" />
+              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Linkedin</label>
+              <app-input-field #liInput type="text" [value]="user().social.linkedin" />
             </div>
             <div>
-              <label>Instagram</label>
-              <app-input-field type="text" [value]="user().social.instagram" />
+              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Instagram</label>
+              <app-input-field #igInput type="text" [value]="user().social.instagram" />
             </div>
           </div>
         </div>
@@ -168,15 +178,15 @@
           </h5>
           <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div class="col-span-2 lg:col-span-1">
-              <label>First Name</label>
-              <app-input-field type="text" [value]="user().firstName" />
+              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">First Name</label>
+              <app-input-field #fnInput type="text" [value]="user().firstName" />
             </div>
             <div class="col-span-2 lg:col-span-1">
-              <label>Last Name</label>
-              <app-input-field type="text" [value]="user().lastName" />
+              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Last Name</label>
+              <app-input-field #lnInput type="text" [value]="user().lastName" />
             </div>
             <div class="col-span-2 lg:col-span-1">
-              <label>Email Address</label>
+              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Email Address</label>
               <app-input-field type="text" [value]="user().email" />
             </div>
           </div>
@@ -192,9 +202,9 @@
         </app-button>
         <app-button
           size="sm"
-          (btnClick)="handleSave()"
+          (btnClick)="handleSave(fnInput.value, lnInput.value, fbInput.value, xInput.value, liInput.value, igInput.value)"
         >
-          Save Changes
+          {{ isSaving ? 'Saving...' : 'Save Changes' }}
         </app-button>
       </div>
     </form>

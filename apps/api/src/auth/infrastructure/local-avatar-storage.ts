@@ -42,18 +42,31 @@ export class LocalAvatarStorage implements AvatarStorageRepository {
       await fs.writeFile(filePath, buffer);
     } catch (err) {
       console.error(`[LocalAvatarStorage] Could not download avatar for ${userId}:`, err);
-      // If file already exists, keep serving existing file, otherwise rethrow
       const exists = await this.avatarExists(userId);
       if (!exists) {
         throw err;
       }
     }
 
-    return `${this.baseUrl}/avatars/${userId}.jpg`;
+    return `${this.baseUrl}/avatars/${this.getSanitizedId(userId)}.jpg`;
+  }
+
+  async saveCustomAvatar(userId: string, buffer: Buffer, mimeType: string): Promise<string> {
+    await fs.mkdir(this.storageDir, { recursive: true });
+    const ext = mimeType.includes('png') ? 'png' : mimeType.includes('webp') ? 'webp' : 'jpg';
+    const filename = `custom_${this.getSanitizedId(userId)}.${ext}`;
+    const filePath = path.join(this.storageDir, filename);
+
+    await fs.writeFile(filePath, buffer);
+    // Add cache buster query parameter to force browser refresh on new custom upload
+    return `${this.baseUrl}/avatars/${filename}?v=${Date.now()}`;
+  }
+
+  private getSanitizedId(userId: string): string {
+    return userId.replace(/[^a-zA-Z0-9_-]/g, '_');
   }
 
   private getFilePath(userId: string): string {
-    const sanitizedId = userId.replace(/[^a-zA-Z0-9_-]/g, '_');
-    return path.join(this.storageDir, `${sanitizedId}.jpg`);
+    return path.join(this.storageDir, `${this.getSanitizedId(userId)}.jpg`);
   }
 }

@@ -1,4 +1,5 @@
 import cors from '@fastify/cors';
+import fastifyMultipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
 import Fastify from 'fastify';
 import fs from 'node:fs/promises';
@@ -19,6 +20,12 @@ const port = Number(process.env.PORT ?? 4312);
 
 await app.register(cors, {
   origin: true,
+});
+
+await app.register(fastifyMultipart, {
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB max avatar file size
+  },
 });
 
 await app.register(fastifyStatic, {

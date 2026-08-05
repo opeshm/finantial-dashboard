@@ -22,6 +22,8 @@ export class UserInfoCardComponent {
   public readonly modal = inject(ModalService);
 
   isOpen = false;
+  isSaving = false;
+
   openModal() { this.isOpen = true; }
   closeModal() { this.isOpen = false; }
 
@@ -29,27 +31,47 @@ export class UserInfoCardComponent {
     const currentUser = this.authService.currentUser();
     const name = currentUser?.name || 'User';
     const nameParts = name.trim().split(' ');
-    const firstName = nameParts[0] || 'User';
-    const lastName = nameParts.slice(1).join(' ') || '';
+    const firstName = currentUser?.firstName ?? nameParts[0] ?? 'User';
+    const lastName = currentUser?.lastName ?? nameParts.slice(1).join(' ') ?? '';
 
     return {
       firstName,
       lastName,
       email: currentUser?.email || 'user@example.com',
-      phone: '+09 363 398 46',
-      bio: 'Financial Dashboard User',
       social: {
-        facebook: 'https://www.facebook.com',
-        x: 'https://x.com',
-        linkedin: 'https://www.linkedin.com',
-        instagram: 'https://instagram.com',
+        facebook: currentUser?.socialLinks?.facebook || 'https://www.facebook.com',
+        x: currentUser?.socialLinks?.x || 'https://x.com',
+        linkedin: currentUser?.socialLinks?.linkedin || 'https://www.linkedin.com',
+        instagram: currentUser?.socialLinks?.instagram || 'https://instagram.com',
       },
     };
   });
 
-  handleSave() {
-    console.log('Saving changes...');
-    this.closeModal();
+  async handleSave(
+    firstName: string | number,
+    lastName: string | number,
+    facebook: string | number,
+    x: string | number,
+    linkedin: string | number,
+    instagram: string | number,
+  ): Promise<void> {
+    this.isSaving = true;
+    try {
+      await this.authService.updateProfile({
+        firstName: String(firstName ?? ''),
+        lastName: String(lastName ?? ''),
+        socialLinks: {
+          facebook: String(facebook ?? ''),
+          x: String(x ?? ''),
+          linkedin: String(linkedin ?? ''),
+          instagram: String(instagram ?? ''),
+        },
+      });
+      this.closeModal();
+    } catch (err) {
+      console.error('Error updating personal info:', err);
+    } finally {
+      this.isSaving = false;
+    }
   }
 }
-

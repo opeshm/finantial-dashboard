@@ -27,6 +27,10 @@ class MockAvatarStorage implements AvatarStorageRepository {
     return `http://localhost:4312/avatars/${userId}.jpg`;
   }
 
+  async saveCustomAvatar(userId: string, _buffer: Buffer, _mimeType: string): Promise<string> {
+    return `http://localhost:4312/avatars/custom_${userId}.jpg`;
+  }
+
   async avatarExists(): Promise<boolean> {
     return false;
   }
