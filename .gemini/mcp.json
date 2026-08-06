@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "codebase-memory-mcp": {
+      "command": "/home/opes/.local/bin/codebase-memory-mcp"
+    },
+    "angular-cli": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@angular/cli",
+        "mcp"
+      ]
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://postgres:postgres@localhost:5432/finantial_dashboard_dev"
+      ]
+    }
+  }
+}

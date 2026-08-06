@@ -1,33 +1,55 @@
 # AGENTS.md
 
+## Overview & Architecture
+This project is a monorepo for a **Financial Dashboard** application.
+- **Frontend App**: Angular 21 standalone SPA located at `apps/dashboard` (named `ng-tailadmin`).
+- **Backend API**: Fastify 5 REST API located at `apps/api` (TypeScript, PostgreSQL, Zod, `yahoo-finance2`).
+- **MCP Servers**: Local project MCP configuration lives in `.gemini/mcp.json` (`codebase-memory-mcp`, `angular-cli`, `postgres`, `netlify`).
+
+## Code Discovery & Tooling Rules
+- **Prefer Codebase Memory MCP**: Use `codebase-memory-mcp` tools (`search_graph`, `trace_path`, `get_code_snippet`, `query_graph`, `search_code`) over `grep`/`file-search` for symbol lookups and dependency tracing across frontend and backend.
+- **PostgreSQL MCP**: Use the `postgres` MCP server to inspect database schemas, verify SQL queries, and audit financial transaction models.
+- **Angular CLI MCP**: Use `angular-cli` MCP tools for Angular best practices, Zoneless/OnPush migration, and modern template control flow guidance.
+
 ## Commands
-- Use `npm install`; `package-lock.json` is the only lockfile.
-- Dev server: `npm run dev` starts both apps: Angular dashboard on port 4310 and API on port 4312.\n- API dev server: `npm run api:dev` starts the API on port 4312.
-- Frontend-only dev server: `npm start` or `npm run web:dev` runs Angular on port 4310 with `apps/dashboard/proxy.conf.json`.
-- Production build/type/template check: `npm run build` builds Angular and type-checks the API.
-- API tests: `npm run api:test`.
-- Angular tests: `npm run web:test`. For non-watch verification use `npx ng test --project ng-tailadmin --watch=false`; for a focused spec use `npx ng test --project ng-tailadmin --include='apps/dashboard/src/path/to/file.spec.ts' --watch=false`.
-- There is no lint or formatter script configured in `package.json`.
+- **Install Dependencies**: Use `npm install` (root `package-lock.json` is the single source of truth).
+- **Full Dev Server**: `npm run dev` starts both API (port `4312`) and Angular frontend (port `4310`) concurrently.
+- **API Dev Server**: `npm run api:dev` starts Fastify API on port `4312` with auto-reload.
+- **Frontend Dev Server**: `npm start` or `npm run web:dev` starts Angular on port `4310` using `apps/dashboard/proxy.conf.json`.
+- **Production Build & Type Check**: `npm run build` (builds Angular SPA and type-checks Fastify API).
+- **API Tests**: `npm run api:test`.
+- **Angular Tests**: `npm run web:test`.
+  - Non-watch run: `npx ng test --project ng-tailadmin --watch=false`.
+  - Focused spec run: `npx ng test --project ng-tailadmin --include='apps/dashboard/src/path/to/file.spec.ts' --watch=false`.
 
-## App Wiring
-- This repository uses an `apps/` layout: Angular lives in `apps/dashboard`, Fastify API lives in `apps/api`.
-- The Angular 21 standalone application is named `ng-tailadmin`; there are no NgModules.
-- Runtime entrypoint is `apps/dashboard/src/main.ts`, which registers Swiper custom elements before `bootstrapApplication(AppComponent, appConfig)`.
-- Routes live in `apps/dashboard/src/app/app.routes.ts`; most pages render under `AppLayoutComponent`, while `/signin` and `/signup` are outside that layout.
-- If adding a sidebar page, update both `apps/dashboard/src/app/app.routes.ts` and the nav arrays in `apps/dashboard/src/app/shared/layout/app-sidebar/app-sidebar.component.ts`.
+## App Wiring & Navigation
+- **Frontend Entrypoint**: `apps/dashboard/src/main.ts` registers Swiper custom elements before calling `bootstrapApplication(AppComponent, appConfig)`.
+- **Routing**: Main routes live in `apps/dashboard/src/app/app.routes.ts`. Most pages render inside `AppLayoutComponent` (except standalone pages like `/signin` and `/signup`).
+- **Adding Nav Pages**: When adding a new page to the sidebar, update both `apps/dashboard/src/app/app.routes.ts` and the navigation arrays in `apps/dashboard/src/app/shared/layout/app-sidebar/app-sidebar.component.ts`.
 
-## Styling
-- Tailwind CSS v4 is configured through `.postcssrc.json` and `apps/dashboard/src/styles.css`; there is no `tailwind.config.*` file.
-- Theme tokens, custom breakpoints, dark variant, and shared utilities are defined directly in `apps/dashboard/src/styles.css` via Tailwind v4 `@theme`, `@custom-variant`, and `@utility` blocks.
-- Global styles also contain third-party overrides for ApexCharts, FullCalendar, Flatpickr, Swiper, and Prism; check `apps/dashboard/src/styles.css` before adding component-local overrides for those libraries.
+## Angular & Frontend Coding Standards
+- **Modern Angular 21**:
+  - Use **Standalone Components** exclusively (no `NgModules`).
+  - Prefer **Signals** (`signal()`, `computed()`, `effect()`) for state management over manual RxJS subscriptions where appropriate.
+  - Use modern **Control Flow** syntax (`@if`, `@for`, `@switch`) instead of legacy structural directives (`*ngIf`, `*ngFor`).
+  - Use `inject()` function for dependency injection instead of constructor parameter injection.
+  - Apply `OnPush` change detection strategy where possible.
+- **Feature Structure**:
+  - Legacy simulations live under `apps/dashboard/src/app/pages/simulations/compound-interest/` using Clean Architecture layers (`domain/`, `application/`, `infrastructure/`, `presentation/`).
+  - New financial features (e.g., `dca-historical`) must be placed under `apps/dashboard/src/app/features/`.
+- **LocalStorage State**:
+  - Compound interest configurations use `localStorage` key `compound-interest-configs`. Handle schema migrations carefully if modifying stored shapes.
 
-## Feature Boundaries
-- The legacy compound-interest feature is under `apps/dashboard/src/app/pages/simulations/compound-interest/` and is organized as `domain/`, `application/`, `infrastructure/`, and `presentation/`.
-- New finance features like `dca-historical` should go under `apps/dashboard/src/app/features/`.
-- The integrated backend API is under `apps/api/src/`.
-- `CompoundInterestComponent` provides `CompoundInterestSimulationService`, `CompoundInterestConfigService`, and maps `CompoundInterestConfigRepository` to `LocalStorageCompoundInterestConfigRepository` locally for the feature.
-- Saved compound-interest configurations use browser `localStorage` key `compound-interest-configs`; changing stored shapes may require migration or import/export handling.
+## Styling & Theme Tokens
+- **Tailwind CSS v4**: Configured via `.postcssrc.json` and `apps/dashboard/src/styles.css` (no `tailwind.config.*` file).
+- **Custom Tokens**: Theme tokens, custom breakpoints, dark variants, and shared utilities are defined directly in `apps/dashboard/src/styles.css` using `@theme`, `@custom-variant`, and `@utility` directives.
+- **Third-Party Styling**: Global styles contain custom overrides for ApexCharts, FullCalendar, Flatpickr, Swiper, and Prism. Check `apps/dashboard/src/styles.css` before adding local component overrides.
 
-## Verification Notes
-- `apps/dashboard/tsconfig.json` enables strict TypeScript and strict Angular templates; `npm run build` is the main available static verification.
-- No Angular `apps/dashboard/src/**/*.spec.ts` files exist currently, so adding Angular tests may require creating the first Karma specs.
+## Backend & API Development (`apps/api`)
+- **Framework & Validation**: Built with Fastify 5 and Zod schema validation.
+- **Database Access**: Uses `pg` driver to connect to PostgreSQL.
+- **Market Data**: Integrates `yahoo-finance2` for real-time stock/ETF prices and historical DCA inputs.
+- **Environment Variables**: Managed via `.env` file in `apps/api/`.
+
+## Verification & Quality Notes
+- `apps/dashboard/tsconfig.json` enables strict TypeScript and strict Angular template checking. Always run `npm run build` to verify type safety.
