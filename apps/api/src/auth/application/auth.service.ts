@@ -49,13 +49,19 @@ export class AuthService {
       }
     }
 
-    const userToSave: User = {
-      id: googleUser.id,
-      email: googleUser.email,
-      name: googleUser.name,
-      avatarUrl: finalAvatarUrl,
-      googleAvatarUrl: googleUser.avatarUrl,
-    };
+    const userToSave: User = existing
+      ? {
+          ...existing,
+          googleAvatarUrl: googleUser.avatarUrl,
+          avatarUrl: finalAvatarUrl,
+        }
+      : {
+          id: googleUser.id,
+          email: googleUser.email,
+          name: googleUser.name,
+          avatarUrl: finalAvatarUrl,
+          googleAvatarUrl: googleUser.avatarUrl,
+        };
 
     return this.userRepository.save(userToSave);
   }

@@ -71,3 +71,29 @@ test('AuthService reuses CDN avatar if Google avatar URL has not changed', async
   assert.equal(user2.avatarUrl, 'http://localhost:4312/avatars/google-123.jpg');
   assert.equal(avatarStorage.mirroredCount, 1); // Should not have re-downloaded
 });
+
+test('AuthService retains existing user DB data (name, firstName, lastName, email) when user exists', async () => {
+  const verifier = new MockGoogleVerifier();
+  const repo = new InMemoryUserRepository();
+  const avatarStorage = new MockAvatarStorage();
+
+  // Pre-seed an existing user with customized DB data
+  await repo.save({
+    id: 'google-123',
+    email: 'custom@example.com',
+    name: 'Custom Name',
+    firstName: 'Custom',
+    lastName: 'Name',
+    avatarUrl: 'http://localhost:4312/avatars/custom_google-123.jpg',
+  });
+
+  const authService = new AuthService(verifier, repo, avatarStorage);
+  const user = await authService.authenticateWithGoogle({ value: 'valid-token' });
+
+  assert.equal(user.id, 'google-123');
+  assert.equal(user.name, 'Custom Name');
+  assert.equal(user.firstName, 'Custom');
+  assert.equal(user.lastName, 'Name');
+  assert.equal(user.email, 'custom@example.com');
+});
+
